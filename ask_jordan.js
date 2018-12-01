@@ -178,7 +178,7 @@ class About extends React.Component {
                 elevation: 0,
                 style: {
                     position: 'absolute',
-                    left: '2em',
+                    left: '1em',
                     top: '2em',
                 }
             },
