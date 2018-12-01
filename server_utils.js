@@ -17,12 +17,10 @@ const TEST_KEY = "1234567890";
 // end of testing section
 
 async function getAnswer(key) {
-    // TODO use key
     if (!TEST_MODE) {
-        let result = await fetch(SERVER_URL + ANSWER_URL);
-        console.log("result=" + result);
+        let result = await fetch(SERVER_URL + ANSWER_URL,
+            { method: "GET", body: JSON.stringify({"key": key})});
         let resultJson = await result.json();
-        console.log("resultJson=" + resultJson);
         return resultJson['answer'];
     } else {
         return new Promise(resolve => {
@@ -34,7 +32,6 @@ async function getAnswer(key) {
 }
 
 async function sendQuestionRequest(submission) {
-    console.log("sendQuestionRequest: " + JSON.stringify({"question" : submission}));
     if (!TEST_MODE) {
         let key = await fetch(SERVER_URL + SUBMIT_QUESTION_URL,
             { method: "POST", body: JSON.stringify({"question" : submission})});
