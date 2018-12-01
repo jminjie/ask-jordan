@@ -108,7 +108,7 @@ class Submit extends React.Component {
             disableButton: this.props.disableButton,
             disableText: this.props.disableText,
         };
-        this.label = 'Ask Jordan!';
+        this.label = 'Jordan Search';
         this.onSubmitBoxSubmit = this.onSubmitBoxSubmit.bind(this);
     }
 
