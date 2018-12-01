@@ -6,20 +6,18 @@ const ANSWER_URL = 'getanswer';
 
 // just for testing
 const TEST_MODE = false;
-
 function setAskState(state) {
     testAskState = state
 }
-
 const TEST_ANSWER = "This is the answer to your question - Jordan";
-
 const TEST_KEY = "1234567890";
 // end of testing section
 
 async function getAnswer(key) {
+    console.log("getAnswer key=" + key);
     if (!TEST_MODE) {
         let result = await fetch(SERVER_URL + ANSWER_URL,
-            { method: "GET", body: JSON.stringify({"key": key})});
+            { method: "POST", body: JSON.stringify({"key": key})});
         let resultJson = await result.json();
         return resultJson['answer'];
     } else {
