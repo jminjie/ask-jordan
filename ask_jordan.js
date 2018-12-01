@@ -2,6 +2,16 @@
 
 const e = React.createElement;
 
+const NO_ANSWER_YET = '';
+
+const {
+    Button,
+    LinearProgress,
+    OutlinedInput,
+    Paper,
+    Typography,
+} = window['material-ui'];
+
 class AskJordan extends React.Component {
     constructor(props) {
         super(props);
@@ -26,11 +36,14 @@ class AskJordan extends React.Component {
     }
 
     async pollForAnswer(key) {
-        console.log("pollForAnswer key=" + key);
+        if (this.askState == '2') {
+            // Old poll can be ignored
+            return;
+        }
+        console.log('pollForAnswer key=' + key);
         let answer = await getAnswer(key);
-        console.log("pollForAnswer answer=" + answer);
-        if (answer != "") {
-            console.log("pollForAnswer done waiting");
+        console.log('pollForAnswer answer=' + answer);
+        if (answer != NO_ANSWER_YET) {
             this.doneWaiting();
             this.setState({
                 askState: '2',
@@ -42,32 +55,56 @@ class AskJordan extends React.Component {
     render() {
         console.log('AskJordan is rendered with state=' + this.state.askState);
         if (this.state.askState == '0') {
-            return e('div', null, 'Ask a question',
-                e(SubmitBox, {afterSubmit: this.startWaiting})
+            return e('div', {style: {textAlign: 'center'}},
+                e(Logo),
+                e(Submit, {afterSubmit: this.startWaiting})
             );
         } else if (this.state.askState == '1') {
-            return 'Waiting for Jordan';
+            return e('div', {style: {textAlign: 'center'}},
+                e(Logo),
+                e(Submit, {
+                    afterSubmit: this.startWaiting,
+                    value: this.state.question,
+                }),
+                e(LinearProgress)
+            );
         } else if (this.state.askState == '2') {
-            return e('div', null, 
-                e('ul', null,
-                    e('li', null, "Q:" + this.state.question),
-                    e('li', null, "A:" + this.state.answer)
-                )
+            return e('div', null,
+                e('div', {style: {textAlign: 'center'}},
+                    e(Logo),
+                    e(Submit, {
+                        value: this.state.question,
+                        disableButton: true,
+                        disableText: true,
+                    }),
+                ),
+                e('br'),
+                e(Results, {value: this.state.answer})
             );
         } else {
-            return "Ask state is invalid =" + this.state.askState;
+            return 'Ask state is invalid =' + this.state.askState;
         }
     }
 }
 
-class SubmitBox extends React.Component {
+class Logo extends React.Component {
+    render() {
+        return e('img', {src: 'resources/jordan.png', style: {
+            padding: '20vh 0 0 0',
+            height: '8em',
+        }});
+    }
+}
+
+class Submit extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             value: '',
-            message: '',
+            disableButton: this.props.disableButton,
+            disableText: this.props.disableText,
         };
-        this.label = "Ask Jordan!";
+        this.label = 'Ask Jordan!';
         this.onSubmitBoxSubmit = this.onSubmitBoxSubmit.bind(this);
     }
 
@@ -75,28 +112,51 @@ class SubmitBox extends React.Component {
         this.state.value = event.target.value;
     }
 
-    async onSubmitBoxSubmit(event) {
-        event.preventDefault();
-        this.setState({
-            message: "Sending question",
-        });
+    async onSubmitBoxSubmit() {
         let key = await sendQuestionRequest(this.state.value);
         this.props.afterSubmit(this.state.value, key);
     }
 
     render() {
-        return e(
-            'form', {
-                onSubmit: () => {this.onSubmitBoxSubmit(event)}
-            },
-            e('input', {
+        return e('form', {
+            onSubmit: (e) => {
+                e.preventDefault();
+                this.onSubmitBoxSubmit();
+                this.setState({
+                    disableButton: true,
+                    disableText: true,
+                });
+            }
+        },
+            e(OutlinedInput, {
+                placeholder: 'e.g. How far is the moon from the earth?',
+                fullWidth: true,
+                value: this.props.value,
+                labelWidth: 0,
+                disabled: this.state.disableText,
                 onChange: () => {this.handleChange(event)},
-                rows: this.rows,
-                cols: this.cols,
             }),
             e('br'),
-            e('button', {type: 'submit'}, this.label),
-            e('div', null, this.state.message)
+            e('br'),
+            e(Button, {
+                type: 'submit',
+                size: 'medium',
+                variant: 'contained',
+                disabled: this.state.disableButton,
+            }, 'Ask Jordan'),
+            e('br'),
+        );
+    }
+}
+
+class Results extends React.Component {
+    render() {
+        return e(Paper, {style: {
+            padding: 10,
+            textAlign: 'left',
+        }},
+            e(Typography, {variant: 'h5'}, 'Search results:'),
+            e(Typography, {component: 'p'}, this.props.value)
         );
     }
 }

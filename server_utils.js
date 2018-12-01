@@ -2,7 +2,7 @@
 const SERVER_URL = 'http://jminjie.com:5000/';
 
 const SUBMIT_QUESTION_URL = 'askquestion';
-const ANSWER_URL = 'getAnswer';
+const ANSWER_URL = 'getanswer';
 
 // just for testing
 const TEST_MODE = false;
