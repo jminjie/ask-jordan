@@ -5,7 +5,11 @@ const e = React.createElement;
 const NO_ANSWER_YET = '';
 
 const {
+    Card,
     Button,
+    ExpansionPanel,
+    ExpansionPanelSummary,
+    ExpansionPanelDetails,
     LinearProgress,
     OutlinedInput,
     Paper,
@@ -53,11 +57,13 @@ class AskJordan extends React.Component {
     render() {
         if (this.state.askState == '0') {
             return e('div', {style: {textAlign: 'center'}},
+                e(About),
                 e(Logo),
                 e(Submit, {afterSubmit: this.startWaiting})
             );
         } else if (this.state.askState == '1') {
             return e('div', {style: {textAlign: 'center'}},
+                e(About),
                 e(Logo),
                 e(Submit, {
                     afterSubmit: this.startWaiting,
@@ -68,6 +74,7 @@ class AskJordan extends React.Component {
         } else if (this.state.askState == '2') {
             return e('div', null,
                 e('div', {style: {textAlign: 'center'}},
+                    e(About),
                     e(Logo),
                     e(Submit, {
                         value: this.state.question,
@@ -154,6 +161,32 @@ class Results extends React.Component {
         }},
             e(Typography, {variant: 'h5'}, 'Search results:'),
             e(Typography, {component: 'p'}, this.props.value)
+        );
+    }
+}
+
+class About extends React.Component {
+    render() {
+        return e('div', {style: {
+            maxWidth: '3px',
+        }},
+            e(ExpansionPanel, {
+                elevation: 0,
+                style: {
+                    position: 'absolute',
+                    left: '2em',
+                    top: '2em',
+                }
+            },
+                e(ExpansionPanelSummary, null,
+                    e(Typography, {variant: 'h6', align: 'center'}, 'About')),
+                e(ExpansionPanelDetails, null,
+                    e(Typography, {variant: 'body2', align: 'left'}, 'Jordan Search (TM)',
+                        e('br'), 'works by sending a',
+                        e('br'), 'text to Jordan and',
+                        e('br'), 'waiting for a reply.')
+                )
+            )
         );
     }
 }
