@@ -1,12 +1,11 @@
-//const SERVER_URL = 'http://192.168.86.84:8080/';
-const SERVER_URL = 'http://localhost:8080/';
+//const SERVER_URL = 'http://localhost:8080/';
+const SERVER_URL = 'http://jminjie.com:5000/';
 
-const ASK_STATE_URL = 'getAskState';
-const SUBMIT_QUESTION_URL = 'submitQuestion';
+const SUBMIT_QUESTION_URL = 'askquestion';
 const ANSWER_URL = 'getAnswer';
 
 // just for testing
-const TEST_MODE = true;
+const TEST_MODE = false;
 
 function setAskState(state) {
     testAskState = state
@@ -21,7 +20,10 @@ async function getAnswer(key) {
     // TODO use key
     if (!TEST_MODE) {
         let result = await fetch(SERVER_URL + ANSWER_URL);
-        return await result.text();
+        console.log("result=" + result);
+        let resultJson = await result.json();
+        console.log("resultJson=" + resultJson);
+        return resultJson['answer'];
     } else {
         return new Promise(resolve => {
             setTimeout(() => {
@@ -32,9 +34,10 @@ async function getAnswer(key) {
 }
 
 async function sendQuestionRequest(submission) {
+    console.log("sendQuestionRequest: " + JSON.stringify({"question" : submission}));
     if (!TEST_MODE) {
         let key = await fetch(SERVER_URL + SUBMIT_QUESTION_URL,
-            { method: "POST", question: submission });
+            { method: "POST", body: JSON.stringify({"question" : submission})});
         return await key.text();
     } else {
         return new Promise(resolve => {
