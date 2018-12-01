@@ -82,7 +82,6 @@ class AskJordan extends React.Component {
                         disableText: true,
                     }),
                 ),
-                e('br'),
                 e(Results, {value: this.state.answer})
             );
         } else {
@@ -94,7 +93,7 @@ class AskJordan extends React.Component {
 class Logo extends React.Component {
     render() {
         return e('img', {src: 'resources/jordan.png', style: {
-            padding: '20vh 0 0 0',
+            margin: '20vh 0 0 0',
             height: '8em',
         }});
     }
@@ -140,15 +139,20 @@ class Submit extends React.Component {
                 disabled: this.state.disableText,
                 onChange: () => {this.handleChange(event)},
             }),
-            e('br'),
-            e('br'),
             e(Button, {
                 type: 'submit',
                 size: 'medium',
                 variant: 'contained',
                 disabled: this.state.disableButton,
-            }, 'Ask Jordan'),
-            e('br'),
+                style: {margin: '40 10 20 10'},
+            }, this.label),
+            e(Button, {
+                type: 'submit',
+                size: 'medium',
+                variant: 'contained',
+                disabled: this.state.disableButton,
+                style: {margin: '40 10 20 10'},
+            }, "I'm feeling lucky"),
         );
     }
 }
