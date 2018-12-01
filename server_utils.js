@@ -14,7 +14,6 @@ const TEST_KEY = "1234567890";
 // end of testing section
 
 async function getAnswer(key) {
-    console.log("getAnswer key=" + key);
     if (!TEST_MODE) {
         let result = await fetch(SERVER_URL + ANSWER_URL,
             { method: "POST", body: JSON.stringify({"key": key})});

@@ -40,9 +40,7 @@ class AskJordan extends React.Component {
             // Old poll can be ignored
             return;
         }
-        console.log('pollForAnswer key=' + key);
         let answer = await getAnswer(key);
-        console.log('pollForAnswer answer=' + answer);
         if (answer != NO_ANSWER_YET) {
             this.doneWaiting();
             this.setState({
@@ -53,7 +51,6 @@ class AskJordan extends React.Component {
     }
 
     render() {
-        console.log('AskJordan is rendered with state=' + this.state.askState);
         if (this.state.askState == '0') {
             return e('div', {style: {textAlign: 'center'}},
                 e(Logo),
