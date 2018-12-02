@@ -1,20 +1,20 @@
-'use strict';
+import React from 'react';
+import ReactDOM from 'react-dom';
+
+import Button from '@material-ui/core/Button';
+import ExpansionPanel from '@material-ui/core/ExpansionPanel';
+import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
+import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
+import LinearProgress from '@material-ui/core/LinearProgress';
+import OutlinedInput from '@material-ui/core/OutlinedInput';
+import Paper from '@material-ui/core/Paper';
+import Typography from '@material-ui/core/Typography';
+
+import * as server from './server_utils';
 
 const e = React.createElement;
 
 const NO_ANSWER_YET = '';
-
-const {
-    Card,
-    Button,
-    ExpansionPanel,
-    ExpansionPanelSummary,
-    ExpansionPanelDetails,
-    LinearProgress,
-    OutlinedInput,
-    Paper,
-    Typography,
-} = window['material-ui'];
 
 class AskJordan extends React.Component {
     constructor(props) {
@@ -40,12 +40,12 @@ class AskJordan extends React.Component {
     }
 
     async pollForAnswer(key) {
-        if (this.askState == '2') {
+        if (this.askState === '2') {
             // Old poll can be ignored
             return;
         }
-        let answer = await getAnswer(key);
-        if (answer != NO_ANSWER_YET) {
+        let answer = await server.getAnswer(key);
+        if (answer !== NO_ANSWER_YET) {
             this.doneWaiting();
             this.setState({
                 askState: '2',
@@ -55,13 +55,13 @@ class AskJordan extends React.Component {
     }
 
     render() {
-        if (this.state.askState == '0') {
+        if (this.state.askState === '0') {
             return e('div', {style: {textAlign: 'center'}},
                 e(About),
                 e(Logo),
                 e(Submit, {afterSubmit: this.startWaiting})
             );
-        } else if (this.state.askState == '1') {
+        } else if (this.state.askState === '1') {
             return e('div', {style: {textAlign: 'center'}},
                 e(About),
                 e(Logo),
@@ -71,7 +71,7 @@ class AskJordan extends React.Component {
                 }),
                 e(LinearProgress)
             );
-        } else if (this.state.askState == '2') {
+        } else if (this.state.askState === '2') {
             return e('div', null,
                 e('div', {style: {textAlign: 'center'}},
                     e(About),
@@ -103,7 +103,6 @@ class Submit extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            value: '',
             disableButton: this.props.disableButton,
             disableText: this.props.disableText,
         };
@@ -112,12 +111,12 @@ class Submit extends React.Component {
     }
 
     handleChange(event) {
-        this.state.value = event.target.value;
+        this.value = event.target.value;
     }
 
     async onSubmitBoxSubmit() {
-        let key = await sendQuestionRequest(this.state.value);
-        this.props.afterSubmit(this.state.value, key);
+        let key = await server.sendQuestionRequest(this.value);
+        this.props.afterSubmit(this.value, key);
     }
 
     render() {
@@ -137,21 +136,22 @@ class Submit extends React.Component {
                 value: this.props.value,
                 labelWidth: 0,
                 disabled: this.state.disableText,
-                onChange: () => {this.handleChange(event)},
+                onChange: (event) => {this.handleChange(event)},
             }),
+            e('br'),
             e(Button, {
                 type: 'submit',
                 size: 'medium',
                 variant: 'contained',
                 disabled: this.state.disableButton,
-                style: {margin: '40 10 20 10'},
+                style: {margin: '40px 10px 20px 10px'},
             }, this.label),
             e(Button, {
                 type: 'submit',
                 size: 'medium',
                 variant: 'contained',
                 disabled: this.state.disableButton,
-                style: {margin: '40 10 20 10'},
+                style: {margin: '40px 10px 20px 10px'},
             }, "I'm feeling lucky"),
         );
     }
@@ -195,7 +195,4 @@ class About extends React.Component {
     }
 }
 
-// these lines find the like_button_container div and display the react
-// component inside it
-const domContainer = document.querySelector('#ask-jordan');
-ReactDOM.render(e(AskJordan), domContainer);
+ReactDOM.render(<AskJordan />, document.getElementById('root'));
