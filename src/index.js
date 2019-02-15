@@ -123,6 +123,7 @@ class Submit extends React.Component {
         return e('form', {
             onSubmit: (e) => {
                 e.preventDefault();
+                if (this.value === '') return;
                 this.onSubmitBoxSubmit();
                 this.setState({
                     disableButton: true,
